@@ -18,7 +18,7 @@ const Header: React.FC = () => {
     <header className={`z-50 ${headerClass} transition-transform duration-300 ${headerStyle === 'hide' ? '-translate-y-full' : 'translate-y-0'}`}>
       <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="text-2xl font-bold text-indigo-600">vogl</Link>
-        {viewportSize === 'desktop' ? (
+        {viewportSize === 'desktop' && (
           <div className="flex items-center space-x-6">
             <Link to="/" className="text-gray-600 hover:text-indigo-600">Home</Link>
             <Link to="/explore" className="text-gray-600 hover:text-indigo-600">Explore</Link>
@@ -26,15 +26,12 @@ const Header: React.FC = () => {
             <Link to="/notifications" className="text-gray-600 hover:text-indigo-600">Notifications</Link>
             <Link to="/profile" className="text-gray-600 hover:text-indigo-600">Profile</Link>
           </div>
-        ) : (
-          <div className="flex items-center space-x-4">
-            <Link to="/search" className="text-gray-600 hover:text-indigo-600"><Search size={24} /></Link>
-            <Link to="/upload" className="text-gray-600 hover:text-indigo-600"><Upload size={24} /></Link>
-          </div>
         )}
-        <Link to="/mypage" className="text-gray-600 hover:text-indigo-600">
-          {viewportSize === 'desktop' ? 'My Page' : <Settings size={24} />}
-        </Link>
+        {viewportSize === 'desktop' && (
+          <Link to="/mypage" className="text-gray-600 hover:text-indigo-600">
+            My Page
+          </Link>
+        )}
       </nav>
     </header>
   );

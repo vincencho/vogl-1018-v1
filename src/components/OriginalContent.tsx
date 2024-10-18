@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Bookmark, Share2, Plus } from 'lucide-react';
+import { TrendSeed } from '../api/trendSeedApi';
 
 interface OriginalContentProps {
-  content: {
-    title: string;
-    description: string;
-    user: {
-      name: string;
-      avatar: string;
-    };
-    trendSeed: {
-      name: string;
-      url: string;
-    };
-  };
+  content: TrendSeed;
 }
 
 const OriginalContent: React.FC<OriginalContentProps> = ({ content }) => {
@@ -25,9 +15,9 @@ const OriginalContent: React.FC<OriginalContentProps> = ({ content }) => {
       {/* User info and actions */}
       <div className="flex items-center justify-between bg-white rounded-lg p-4 shadow">
         <div className="flex items-center">
-          <img src={content.user.avatar} alt={content.user.name} className="w-10 h-10 rounded-full mr-3" />
+          <img src="https://source.unsplash.com/random/100x100?face" alt="User Avatar" className="w-10 h-10 rounded-full mr-3" />
           <div>
-            <p className="font-semibold">{content.user.name}</p>
+            <p className="font-semibold">Fashion Trendsetter</p>
             <button className="text-sm text-gray-500">팔로우</button>
           </div>
         </div>
@@ -43,15 +33,15 @@ const OriginalContent: React.FC<OriginalContentProps> = ({ content }) => {
 
       {/* Content */}
       <div className="bg-white rounded-lg p-4 shadow">
-        <h2 className="text-xl font-bold mb-2">{content.title}</h2>
-        <p className="text-gray-600 mb-4">{content.description}</p>
+        <h2 className="text-xl font-bold mb-2">{content.name}</h2>
+        <p className="text-gray-600 mb-4">A stunning white ensemble perfect for a sophisticated, minimalist summer look.</p>
       </div>
 
       {/* Trend Seed */}
       <div className="bg-white rounded-lg p-4 shadow">
         <h3 className="font-bold mb-1">트렌드 시드</h3>
-        <p className="text-sm">{content.trendSeed.name}</p>
-        <p className="text-xs text-gray-500">{content.trendSeed.url}</p>
+        <p className="text-sm">fashion_fafa</p>
+        <p className="text-xs text-gray-500">www.instagram.com/fashion_fafa1234</p>
         <button className="mt-2 bg-yellow-400 text-white px-4 py-2 rounded-full text-sm font-medium flex items-center">
           <Plus size={16} className="mr-1" /> 씨드 채널 추가
         </button>

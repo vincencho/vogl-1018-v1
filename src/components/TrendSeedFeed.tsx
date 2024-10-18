@@ -85,7 +85,7 @@ const TrendSeedFeed: React.FC = () => {
 
   const renderSeedItem = (seed: TrendSeed) => (
     <div key={seed.id} className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-      <Link to={`/content/${seed.id}`}>
+      <Link to={`/content/${seed.id}`} state={{ seedData: seed }}>
         <img src={seed.imageUrl} alt={`Trend Seed ${seed.id}`} className="w-full object-cover" style={{ height: `${Math.floor(Math.random() * (300 - 200 + 1)) + 200}px` }} />
       </Link>
       <div className="p-3">

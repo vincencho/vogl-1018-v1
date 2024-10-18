@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useLayout } from '../contexts/LayoutContext';
 import { useMainPadding } from '../contexts/MainPaddingContext';
 import SaveModal from '../components/SaveModal';
@@ -11,30 +11,16 @@ import CoordinateTab from '../components/CoordinateTab';
 import MoodTab from '../components/MoodTab';
 import IdeaTab from '../components/IdeaTab';
 import ImageContentSection from '../components/ImageContentSection';
-
-interface Content {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-  user: {
-    name: string;
-    avatar: string;
-  };
-  trendSeed: {
-    name: string;
-    url: string;
-  };
-}
+import { TrendSeed } from '../api/trendSeedApi';
 
 const ImageContentDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [content, setContent] = useState<Content | null>(null);
+  const location = useLocation();
+  const [content, setContent] = useState<TrendSeed | null>(null);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-  const [isObjectRecognitionActive, setIsObjectRecognitionActive] =
-    useState(false);
+  const [isObjectRecognitionActive, setIsObjectRecognitionActive] = useState(false);
   const [isProductSimilarOpen, setIsProductSimilarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('original');
   const { viewportSize, setHeaderStyle, setFooterStyle } = useLayout();
@@ -59,29 +45,28 @@ const ImageContentDetailPage: React.FC = () => {
   }, [viewportSize, setHeaderStyle, setFooterStyle, setMainPadding]);
 
   useEffect(() => {
-    const fetchContent = async () => {
-      // Simulated API call with mock data
-      const mockContent: Content = {
-        id: parseInt(id || '0'),
-        title: 'Elegant White Ensemble',
-        description:
-          'A stunning white halter top paired with high-waisted wide-leg pants. Perfect for a sophisticated, minimalist summer look.',
-        imageUrl:
-          'https://i.pinimg.com/474x/97/94/0d/97940d3488cd063b20e2a457d59674d2.jpg',
-        user: {
-          name: 'Fashion Trendsetter',
-          avatar: 'https://source.unsplash.com/random/100x100?face',
-        },
-        trendSeed: {
-          name: 'fashion_fafa',
-          url: 'www.instagram.com/fashion_fafa1234',
-        },
+    const seedData = location.state?.seedData;
+    if (seedData) {
+      setContent(seedData);
+    } else {
+      // Fallback to fetching data if it's not available in location state
+      const fetchContent = async () => {
+        // Here you would typically fetch the data from your API
+        // For now, we'll use mock data
+        const mockContent: TrendSeed = {
+          id: parseInt(id || '0'),
+          name: 'Elegant White Ensemble',
+          imageUrl: 'https://i.pinimg.com/474x/97/94/0d/97940d3488cd063b20e2a457d59674d2.jpg',
+          likeCount: 1000,
+          commentCount: 50,
+          saved: false
+        };
+        setContent(mockContent);
       };
-      setContent(mockContent);
-    };
 
-    fetchContent();
-  }, [id]);
+      fetchContent();
+    }
+  }, [id, location.state]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -113,7 +98,7 @@ const ImageContentDetailPage: React.FC = () => {
         <div className={`${viewportSize === 'desktop' ? 'w-1/2' : 'w-full'}`}>
           <ImageContentSection
             imageUrl={content.imageUrl}
-            title={content.title}
+            title={content.name}
             isObjectRecognitionActive={isObjectRecognitionActive}
             onGoBack={handleGoBack}
             onShare={handleShare}

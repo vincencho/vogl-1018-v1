@@ -19,7 +19,7 @@ const TrendSeedFeed: React.FC = () => {
   const [showSaveNotification, setShowSaveNotification] = useState(false);
   const [savedBoardName, setSavedBoardName] = useState('');
 
-  const { setHeaderStyle } = useLayout();
+  const { setHeaderStyle, viewportSize } = useLayout();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,7 +46,12 @@ const TrendSeedFeed: React.FC = () => {
     setError(null);
     try {
       const data = await fetchTrendSeeds();
-      setSeeds(data);
+      // Repeat the data 4 times to get 24 items
+      const repeatedData = Array(4).fill(data).flat().map((seed, index) => ({
+        ...seed,
+        id: index + 1 // Assign new unique ids
+      }));
+      setSeeds(repeatedData);
     } catch (err) {
       setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
@@ -78,6 +83,30 @@ const TrendSeedFeed: React.FC = () => {
     setShowSaveNotification(true);
   };
 
+  const renderSeedItem = (seed: TrendSeed) => (
+    <div key={seed.id} className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+      <Link to={`/content/${seed.id}`}>
+        <img src={seed.imageUrl} alt={`Trend Seed ${seed.id}`} className="w-full object-cover" style={{ height: `${Math.floor(Math.random() * (300 - 200 + 1)) + 200}px` }} />
+      </Link>
+      <div className="p-3">
+        <h3 className="text-sm font-semibold mb-2 truncate">{seed.name}</h3>
+        <div className="flex justify-between items-center text-xs">
+          <button onClick={() => handleLike(seed.id)} className="flex items-center text-gray-600 hover:text-red-500">
+            <Heart size={16} className={seed.saved ? 'fill-current text-red-500' : ''} />
+            <span className="ml-1">{seed.likeCount}</span>
+          </button>
+          <button className="flex items-center text-gray-600 hover:text-blue-500">
+            <MessageCircle size={16} />
+            <span className="ml-1">{seed.commentCount}</span>
+          </button>
+          <button onClick={() => handleSave(seed.id)} className={`flex items-center ${seed.saved ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'}`}>
+            <Bookmark size={16} className={seed.saved ? 'fill-current' : ''} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-4 py-8">
       <SuggestedUsers />
@@ -94,31 +123,15 @@ const TrendSeedFeed: React.FC = () => {
           </button>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {seeds.map((seed) => (
-          <div key={seed.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            <Link to={`/content/${seed.id}`}>
-              <img src={seed.imageUrl} alt={`Trend Seed ${seed.id}`} className="w-full h-64 object-cover" />
-            </Link>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold mb-2">{seed.name}</h3>
-              <div className="flex justify-between items-center">
-                <button onClick={() => handleLike(seed.id)} className="flex items-center text-gray-600 hover:text-red-500">
-                  <Heart size={20} className={seed.saved ? 'fill-current text-red-500' : ''} />
-                  <span className="ml-1">{seed.likeCount}</span>
-                </button>
-                <button className="flex items-center text-gray-600 hover:text-blue-500">
-                  <MessageCircle size={20} />
-                  <span className="ml-1">{seed.commentCount}</span>
-                </button>
-                <button onClick={() => handleSave(seed.id)} className={`flex items-center ${seed.saved ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'}`}>
-                  <Bookmark size={20} className={seed.saved ? 'fill-current' : ''} />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {viewportSize === 'mobile' ? (
+        <div className="grid grid-cols-2 gap-4">
+          {seeds.map(renderSeedItem)}
+        </div>
+      ) : (
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-4">
+          {seeds.map(renderSeedItem)}
+        </div>
+      )}
       <SaveModal
         isOpen={isSaveModalOpen}
         onClose={() => setIsSaveModalOpen(false)}

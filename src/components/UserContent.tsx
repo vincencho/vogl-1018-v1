@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const UserContent: React.FC = () => {
   return (
@@ -12,9 +13,9 @@ const UserContent: React.FC = () => {
             <p className="text-gray-600">Fashion Enthusiast</p>
           </div>
         </div>
-        <button className="text-gray-600 hover:text-indigo-600">
+        <Link to="/mypage" className="text-gray-600 hover:text-indigo-600">
           <Settings size={24} />
-        </button>
+        </Link>
       </div>
       <div className="mb-6">
         <h3 className="text-xl font-semibold mb-2">Bio</h3>

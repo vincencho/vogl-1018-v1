@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import UserContent from '../components/UserContent';
 import SavedContent from '../components/SavedContent';
 import UserUploads from '../components/UserUploads';

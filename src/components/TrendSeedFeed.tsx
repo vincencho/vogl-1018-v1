@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Bookmark, RefreshCw } from 'lucide-react';
 import SaveModal from './SaveModal';
 import SaveNotification from './SaveNotification';
@@ -21,23 +21,6 @@ const TrendSeedFeed: React.FC = () => {
 
   const { setHeaderStyle } = useLayout();
 
-  const loadTrendSeeds = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchTrendSeeds();
-      setSeeds(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadTrendSeeds();
-  }, [loadTrendSeeds]);
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.innerWidth < 768) {
@@ -57,6 +40,23 @@ const TrendSeedFeed: React.FC = () => {
       setHeaderStyle('show');
     };
   }, [setHeaderStyle]);
+
+  const loadTrendSeeds = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await fetchTrendSeeds();
+      setSeeds(data);
+    } catch (err) {
+      setError(err.message || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTrendSeeds();
+  }, []);
 
   const handleLike = (id: number) => {
     setSeeds(seeds.map(seed => 
@@ -104,4 +104,33 @@ const TrendSeedFeed: React.FC = () => {
               <h3 className="text-lg font-semibold mb-2">{seed.name}</h3>
               <div className="flex justify-between items-center">
                 <button onClick={() => handleLike(seed.id)} className="flex items-center text-gray-600 hover:text-red-500">
-                  <Heart size={20} className={seed.
+                  <Heart size={20} className={seed.saved ? 'fill-current text-red-500' : ''} />
+                  <span className="ml-1">{seed.likeCount}</span>
+                </button>
+                <button className="flex items-center text-gray-600 hover:text-blue-500">
+                  <MessageCircle size={20} />
+                  <span className="ml-1">{seed.commentCount}</span>
+                </button>
+                <button onClick={() => handleSave(seed.id)} className={`flex items-center ${seed.saved ? 'text-yellow-500' : 'text-gray-600 hover:text-yellow-500'}`}>
+                  <Bookmark size={20} className={seed.saved ? 'fill-current' : ''} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <SaveModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSave={handleSaveToBoard}
+      />
+      <SaveNotification
+        isVisible={showSaveNotification}
+        boardName={savedBoardName}
+        onClose={() => setShowSaveNotification(false)}
+      />
+    </div>
+  );
+};
+
+export default TrendSeedFeed;

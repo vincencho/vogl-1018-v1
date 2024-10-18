@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: '/api',  // This will be proxied by Vite
+  baseURL: 'https://zu621tawdd.execute-api.ap-northeast-2.amazonaws.com',
   timeout: 30000, // 30 seconds
 });
 
